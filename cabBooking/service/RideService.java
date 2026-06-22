@@ -98,8 +98,7 @@ public class RideService {
 
         ride.setFare(fare);
 
-        ride.setStatus(
-                RideStatus.COMPLETED);
+        ride.setStatus(RideStatus.COMPLETED);
 
         ride.getDriver()
                 .setStatus(
