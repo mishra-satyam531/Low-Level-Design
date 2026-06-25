@@ -2,6 +2,7 @@ package atm.models;
 
 import java.util.Map;
 
+import atm.state.ATMState;
 import atm.strategy.CashDispenser;
 
 public class ATM {
@@ -9,88 +10,82 @@ public class ATM {
 
     private Card currentCard;
 
-    private Map<Integer, Integer> cashInventory;
+    private ATMState currentState;
 
     private CashDispenser cashDispenser;
 
-    private boolean authenticated;
+    private Map<Integer, Integer> cashInventory;
 
-    public ATM(String atmId, Map<Integer, Integer> cashInventory, CashDispenser cashDispenser) {
+    private int failedPinAttempts;
+
+    public ATM(String atmId, Map<Integer, Integer> cashInventory, CashDispenser cashDispenser, ATMState initialState) {
+
         this.atmId = atmId;
         this.cashInventory = cashInventory;
         this.cashDispenser = cashDispenser;
-        this.authenticated = false;
+        this.currentState = initialState;
+        this.failedPinAttempts = 0;
     }
 
+    // ---------- Methods used by client ----------
+    
     public void insertCard(Card card) {
-        if (currentCard != null) {
-            System.out.println("Another card is already inserted.");
-            return;
-        }
-
-        currentCard = card;
-        authenticated = false;
-
-        System.out.println("Card inserted successfully.");
+        currentState.insertCard(this, card);
     }
 
-    public boolean enterPin(int pin) {
-        if (currentCard == null) {
-            System.out.println("Please insert a card first.");
-            return false;
-        }
-
-        authenticated = currentCard.validatePin(pin);
-
-        if (authenticated) {
-            System.out.println("PIN verified successfully.");
-        } else {
-            System.out.println("Incorrect PIN.");
-        }
-
-        return authenticated;
-    }
-
-    public void checkBalance() {
-
-        if (!authenticated) {
-            System.out.println("Please authenticate first.");
-            return;
-        }
-
-        System.out.println("Available Balance : ₹" + currentCard.getBankAccount().getBalance());
+    public void enterPin(int pin) {
+        currentState.enterPin(this, pin);
     }
 
     public void withdraw(int amount) {
+        currentState.withdraw(this, amount);
+    }
 
-        if (!authenticated) {
-            System.out.println("Please authenticate first.");
-            return;
-        }
+    public void checkBalance() {
+        currentState.checkBalance(this);
+    }
 
-        BankAccount account = currentCard.getBankAccount();
+    public void ejectCard() {
+        currentState.ejectCard(this);
+    }
 
-        if (account.getBalance() < amount) {
-            System.out.println("Insufficient account balance.");
-            return;
-        }
+    // ---------- Methods used by States ----------
 
-        Map<Integer, Integer> dispensedNotes = cashDispenser.dispenseCash(amount, cashInventory);
+    public void startSession(Card card) {
+        currentCard = card;
+        failedPinAttempts = 0;
+    }
 
-        if (dispensedNotes == null) {
-            System.out.println("ATM cannot dispense the requested amount.");
-            return;
-        }
+    public void endSession() {
+        currentCard = null;
+        failedPinAttempts = 0;
+    }
 
-        account.withdraw(amount);
+    public void changeState(ATMState state) {
+        currentState = state;
+    }
 
-        System.out.println("Please collect your cash.");
+    public void incrementFailedPinAttempts() {
+        failedPinAttempts++;
+    }
 
-        System.out.println("Notes Dispensed:");
+    public void resetFailedPinAttempts() {
+        failedPinAttempts = 0;
+    }
 
-        for (Map.Entry<Integer, Integer> entry : dispensedNotes.entrySet()) {
+    public int getFailedPinAttempts() {
+        return failedPinAttempts;
+    }
 
-            System.out.println("₹" + entry.getKey() + " x " + entry.getValue());
-        }
+    public Card getCurrentCard() {
+        return currentCard;
+    }
+
+    public CashDispenser getCashDispenser() {
+        return cashDispenser;
+    }
+
+    public Map<Integer, Integer> getCashInventory() {
+        return cashInventory;
     }
 }
