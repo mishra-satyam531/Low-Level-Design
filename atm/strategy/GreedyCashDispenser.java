@@ -38,13 +38,8 @@ public class GreedyCashDispenser implements CashDispenser {
             return null;
         }
 
-        for(Integer denomination :
-                dispensedNotes.keySet()) {
-
-            inventory.put(
-                    denomination,
-                    inventory.get(denomination)
-                            - dispensedNotes.get(denomination));
+        for(Integer denomination : dispensedNotes.keySet()) {
+            inventory.put(denomination, inventory.get(denomination) - dispensedNotes.get(denomination));
         }
 
         return dispensedNotes;
