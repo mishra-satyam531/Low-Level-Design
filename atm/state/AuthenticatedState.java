@@ -39,13 +39,13 @@ public class AuthenticatedState implements ATMState {
         System.out.println("Collect your cash:");
 
         for(Map.Entry<Integer, Integer> entry : dispensedNotes.entrySet()) {
-            System.out.println("₹" + entry.getKey() + " x " + entry.getValue());
+            System.out.println("Rs " + entry.getKey() + " x " + entry.getValue());
         }
     }
 
     @Override
     public void checkBalance(ATM atm) {
-        System.out.println("Balance : ₹" + atm.getCurrentCard().getBankAccount().getBalance());
+        System.out.println("Balance : Rs " + atm.getCurrentCard().getBankAccount().getBalance());
     }
 
     @Override
