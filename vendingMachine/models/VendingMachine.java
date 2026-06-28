@@ -1,6 +1,8 @@
 package vendingMachine.models;
 
 import java.util.List;
+
+import vendingMachine.state.IdleState;
 import vendingMachine.state.VendingMachineState;;;
 
 public class VendingMachine {
@@ -78,5 +80,19 @@ public class VendingMachine {
 
     public void selectSlot(Slot slot) {
         selectedSlot = slot;
+    }
+
+    public void endTransaction() {
+
+        resetTransaction();
+
+        changeState(new IdleState());
+    }
+
+    public void cancelCurrentTransaction() {
+
+        returnInsertedMoney();
+
+        endTransaction();
     }
 }
