@@ -3,7 +3,6 @@ package vendingMachine.models;
 import java.util.List;
 
 import vendingMachine.state.IdleState;
-import vendingMachine.state.ProductSelectedState;
 import vendingMachine.state.VendingMachineState;;;
 
 public class VendingMachine {
