@@ -14,17 +14,8 @@ public class MoneyInsertedState implements VendingMachineState {
 
     @Override
     public void selectProduct(VendingMachine machine, String slotId) {
-        Slot selectedSlot = null;
-
-        for(Slot slot : machine.getSlots()) {
-
-            if(slot.getSlotId().equals(slotId)) {
-
-                selectedSlot = slot;
-                break;
-            }
-        }
-
+        Slot selectedSlot = machine.findSlot(slotId);
+        
         if(selectedSlot == null) {
 
             System.out.println("Invalid Slot.");

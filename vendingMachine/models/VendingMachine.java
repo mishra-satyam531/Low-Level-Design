@@ -3,6 +3,7 @@ package vendingMachine.models;
 import java.util.List;
 
 import vendingMachine.state.IdleState;
+import vendingMachine.state.ProductSelectedState;
 import vendingMachine.state.VendingMachineState;;;
 
 public class VendingMachine {
@@ -59,8 +60,21 @@ public class VendingMachine {
         insertedMoney = 0;
     }
 
-    public void resetTransaction() {
+    public Slot findSlot(String slotId) {
+        Slot selectedSlot = null;
 
+        for(Slot slot : slots) {
+
+            if(slot.getSlotId().equals(slotId)) {
+                selectedSlot = slot;
+                break;
+            }
+        }
+
+        return selectedSlot;
+    }
+
+    public void resetTransaction() {
         insertedMoney = 0;
 
         selectedSlot = null;
@@ -83,7 +97,6 @@ public class VendingMachine {
     }
 
     public void endTransaction() {
-
         resetTransaction();
 
         changeState(new IdleState());
